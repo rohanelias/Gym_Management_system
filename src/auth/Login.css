@@ -1,0 +1,20 @@
+.login-container {
+  min-height: 100vh;
+  background-color: #0e0e0e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.login-card {
+  background-color: #141a22 !important;
+  padding: 36px 40px;
+  width: 360px;
+  border-radius: 10px !important;
+}
+.login-card .MuiTypography-h5 {
+  color: #ffffff;
+  margin-bottom: 24px;
+  text-align: center;
+}
