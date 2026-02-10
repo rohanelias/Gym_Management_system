@@ -1,20 +1,62 @@
+/* Page background */
 .login-container {
   min-height: 100vh;
-  background-color: #0e0e0e;
+  background: radial-gradient(circle at top, #111827, #020617);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-
+/* Beige card */
 .login-card {
-  background-color: #141a22 !important;
-  padding: 36px 40px;
-  width: 360px;
-  border-radius: 10px !important;
+  width: 380px;
+  padding: 34px 30px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #f5f1e8, #e9e2d0);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
 }
-.login-card .MuiTypography-h5 {
-  color: #ffffff;
-  margin-bottom: 24px;
+
+/* Title */
+.login-title {
+  color: #1f2933;
+  font-size: 1.6rem;
+  font-weight: 700;
   text-align: center;
+  letter-spacing: 0.5px;
+}
+
+/* Subtitle */
+.login-subtitle {
+  color: #4b5563;
+  font-size: 0.85rem;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+/* Login button */
+.login-btn {
+  margin-top: 12px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  border-radius: 10px;
+  padding: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
+}
+
+.login-btn:hover {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  transform: translateY(-1px);
+}
+
+/* Signup link */
+.signup-link {
+  margin-top: 6px;
+  color: #2563eb;
+  font-size: 0.85rem;
+  text-transform: none;
+}
+
+.signup-link:hover {
+  color: #1d4ed8;
 }

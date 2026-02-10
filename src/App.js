@@ -1,29 +1,32 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 
 import Navbar from "./components/Navbar";
 import Login from "./auth/Login";
+import Signup from "./auth/Signup";
 import RequireRole from "./auth/RequireRole";
 
 import Dashboard from "./pages/Dashboard";
 import Members from "./pages/Members";
 import Trainers from "./pages/Trainers";
 import Payments from "./pages/Payments";
-import Signup from "./auth/Signup";
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Navbar />
-
         <Routes>
-          <Route path="/" element={<Login />} />
 
+          {/* Public Routes */}
+          <Route path="/" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+
+          {/* Protected Routes (with Navbar) */}
           <Route
             path="/dashboard"
             element={
               <RequireRole roles={["admin", "trainer", "user"]}>
+                <Navbar />
                 <Dashboard />
               </RequireRole>
             }
@@ -33,19 +36,17 @@ function App() {
             path="/members"
             element={
               <RequireRole roles={["admin", "trainer"]}>
+                <Navbar />
                 <Members />
               </RequireRole>
             }
           />
-          <Route
-            path="/signup"
-            element={<Signup />}
-            />
-            
+
           <Route
             path="/trainers"
             element={
               <RequireRole roles={["admin"]}>
+                <Navbar />
                 <Trainers />
               </RequireRole>
             }
@@ -55,10 +56,15 @@ function App() {
             path="/payments"
             element={
               <RequireRole roles={["admin", "user"]}>
+                <Navbar />
                 <Payments />
               </RequireRole>
             }
           />
+
+          {/* Catch-all redirect */}
+          <Route path="*" element={<Navigate to="/" />} />
+
         </Routes>
       </BrowserRouter>
     </AuthProvider>

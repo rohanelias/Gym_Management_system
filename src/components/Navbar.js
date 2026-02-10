@@ -7,7 +7,8 @@ import {
   Toolbar,
   Typography,
   Button,
-  Stack
+  Stack,
+  Box
 } from "@mui/material";
 
 function Navbar() {
@@ -18,45 +19,86 @@ function Navbar() {
 
   const handleLogout = () => {
     logout();
-    navigate("/", { replace: true }); // 🔥 IMPORTANT
+    navigate("/", { replace: true });
   };
 
   return (
-    <AppBar position="static">
-      <Toolbar>
-        <Typography sx={{ flexGrow: 1 }}>
-          Gym Management System
+    <AppBar
+      position="static"
+      elevation={0}
+      sx={{
+        background: "linear-gradient(90deg, #020617, #111827)",
+        borderBottom: "1px solid rgba(255,255,255,0.08)"
+      }}
+    >
+      <Toolbar sx={{ minHeight: 72 }}>
+        {/* Brand */}
+        <Typography
+          variant="h6"
+          sx={{
+            flexGrow: 1,
+            fontWeight: 700,
+            letterSpacing: 1,
+            color: "#f9fafb"
+          }}
+        >
+          GYM<span style={{ color: "#2563eb" }}>PRO</span>
         </Typography>
 
-        <Stack direction="row" spacing={2}>
-          <Button component={Link} to="/dashboard" color="inherit">
-            Dashboard
-          </Button>
+        {/* Navigation */}
+        <Stack direction="row" spacing={1}>
+          <NavButton to="/dashboard">Dashboard</NavButton>
 
           {role === "admin" && (
             <>
-              <Button component={Link} to="/members" color="inherit">
-                Members
-              </Button>
-              <Button component={Link} to="/trainers" color="inherit">
-                Trainers
-              </Button>
-              <Button component={Link} to="/payments" color="inherit">
-                Payments
-              </Button>
+              <NavButton to="/members">Members</NavButton>
+              <NavButton to="/trainers">Trainers</NavButton>
+              <NavButton to="/payments">Payments</NavButton>
             </>
           )}
 
-          <Button
-            variant="outlined"
-            color="inherit"
-            onClick={handleLogout}
-          >
-            Logout
-          </Button>
+          {/* Logout */}
+          <Box ml={1}>
+            <Button
+              variant="outlined"
+              onClick={handleLogout}
+              sx={{
+                color: "#f87171",
+                borderColor: "rgba(248,113,113,0.4)",
+                "&:hover": {
+                  backgroundColor: "rgba(248,113,113,0.08)",
+                  borderColor: "#f87171"
+                }
+              }}
+            >
+              Logout
+            </Button>
+          </Box>
         </Stack>
       </Toolbar>
     </AppBar>
+  );
+}
+
+/* Reusable nav button */
+function NavButton({ to, children }) {
+  return (
+    <Button
+      component={Link}
+      to={to}
+      sx={{
+        color: "#e5e7eb",
+        textTransform: "none",
+        fontWeight: 500,
+        px: 2,
+        borderRadius: 2,
+        "&:hover": {
+          backgroundColor: "rgba(255,255,255,0.08)"
+        }
+      }}
+    >
+      {children}
+    </Button>
   );
 }
 
