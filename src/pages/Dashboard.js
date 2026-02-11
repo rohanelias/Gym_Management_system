@@ -1,183 +1,82 @@
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
-import {
-  Box,
-  Typography,
-  Grid,
-  Paper,
-  Divider,
-  Chip
-} from "@mui/material";
-
-import { BarChart } from "@mui/x-charts/BarChart";
-
-function StatCard({ title, value }) {
-  return (
-    <Paper
-      elevation={2}
-      sx={{
-        p: 2.5,
-        borderRadius: 3,
-        backgroundColor: "#ffffff"
-      }}
-    >
-      <Typography variant="body2" color="text.secondary">
-        {title}
-      </Typography>
-      <Typography variant="h6" fontWeight={700}>
-        {value}
-      </Typography>
-    </Paper>
-  );
-}
+import { Box, Typography, Grid } from "@mui/material";
+import IconCard from "../components/IconCard";
 
 function Dashboard() {
   const { role } = useContext(AuthContext);
+  const navigate = useNavigate();
 
-  // Only show this dashboard to USERS
-  if (role !== "user") return null;
-
-  /* Mock data (replace with backend later) */
-  const membership = {
-    plan: "Gold",
-    status: "Active",
-    expiry: "30 Mar 2026"
-  };
-
-  const trainerName = "Rahul Sharma";
-
-  const workoutPlan = [
-    { day: "Monday", workout: "Chest & Triceps" },
-    { day: "Tuesday", workout: "Back & Biceps" },
-    { day: "Wednesday", workout: "Legs" },
-    { day: "Thursday", workout: "Shoulders" },
-    { day: "Friday", workout: "Core & Cardio" }
-  ];
-
-  const weeklyActivity = [3, 4, 5, 4, 6, 2, 0];
+  if (role !== "Member") return null;
 
   return (
-    <Box sx={{ p: 4, backgroundColor: "#f8fafc", minHeight: "100vh" }}>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        px: { xs: 3, md: 6 },
+        py: 5,
+        background:
+          "linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%)"
+      }}
+    >
       {/* Header */}
-      <Typography variant="h4" fontWeight={700} gutterBottom>
-        My Dashboard
+      <Typography
+        variant="h3"
+        fontWeight={800}
+        sx={{ mb: 1 }}
+      >
+        Welcome Back 👋
       </Typography>
 
-      <Typography variant="body2" color="text.secondary" mb={4}>
-        Track your workouts, progress, and membership
+      <Typography
+        variant="body1"
+        sx={{ opacity: 0.7, mb: 5 }}
+      >
+        Everything you need for your fitness journey
       </Typography>
 
-      {/* Top Stats */}
-      <Grid container spacing={3} mb={4}>
-        <Grid item xs={12} sm={4}>
-          <StatCard title="Membership Status" value={membership.status} />
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <StatCard title="Trainer" value={trainerName} />
-        </Grid>
-        <Grid item xs={12} sm={4}>
-          <StatCard title="Plan" value={membership.plan} />
-        </Grid>
-      </Grid>
-
-      {/* Main Content */}
-      <Grid container spacing={3}>
-        {/* Workout Plan */}
-        <Grid item xs={12} md={6}>
-          <Paper elevation={2} sx={{ p: 3, borderRadius: 3 }}>
-            <Typography variant="h6" fontWeight={600} gutterBottom>
-              Workout Plan
-            </Typography>
-
-            <Divider sx={{ mb: 2 }} />
-
-            {workoutPlan.map((item, index) => (
-              <Box
-                key={index}
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  mb: 1.5
-                }}
-              >
-                <Typography variant="body2">{item.day}</Typography>
-                <Chip
-                  label={item.workout}
-                  color="primary"
-                  size="small"
-                />
-              </Box>
-            ))}
-          </Paper>
+      {/* Icon Grid */}
+      <Grid container spacing={4}>
+        <Grid item xs={12} sm={6} md={3}>
+          <IconCard
+            icon="🏋️‍♂️"
+            title="Workouts"
+            subtitle="Training plans by your coach"
+            accent="linear-gradient(135deg,#667eea,#764ba2)"
+            onClick={() => navigate("/member/workouts")}
+          />
         </Grid>
 
-        {/* Weekly Activity Chart */}
-        <Grid item xs={12} md={6}>
-          <Paper elevation={2} sx={{ p: 3, borderRadius: 3 }}>
-            <Typography variant="h6" fontWeight={600} gutterBottom>
-              Weekly Activity
-            </Typography>
-
-            <Divider sx={{ mb: 2 }} />
-
-            <BarChart
-              height={250}
-              series={[
-                {
-                  data: weeklyActivity,
-                  label: "Workout Days",
-                  color: "#2563eb"
-                }
-              ]}
-              xAxis={[
-                {
-                  data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-                  scaleType: "band"
-                }
-              ]}
-            />
-          </Paper>
+        <Grid item xs={12} sm={6} md={3}>
+          <IconCard
+            icon="🥗"
+            title="Diet"
+            subtitle="Personalized nutrition"
+            accent="linear-gradient(135deg,#43cea2,#185a9d)"
+            onClick={() => navigate("/member/diet")}
+          />
         </Grid>
 
-        {/* Membership Details */}
-        <Grid item xs={12}>
-          <Paper elevation={2} sx={{ p: 3, borderRadius: 3 }}>
-            <Typography variant="h6" fontWeight={600} gutterBottom>
-              Membership Details
-            </Typography>
+        <Grid item xs={12} sm={6} md={3}>
+          <IconCard
+            icon="📊"
+            title="Progress"
+            subtitle="Track your growth"
+            accent="linear-gradient(135deg,#f7971e,#ffd200)"
+            onClick={() => navigate("/member/progress")}
+          />
+        </Grid>
 
-            <Divider sx={{ mb: 2 }} />
-
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={4}>
-                <Typography variant="body2" color="text.secondary">
-                  Plan
-                </Typography>
-                <Typography fontWeight={600}>
-                  {membership.plan}
-                </Typography>
-              </Grid>
-
-              <Grid item xs={12} sm={4}>
-                <Typography variant="body2" color="text.secondary">
-                  Status
-                </Typography>
-                <Typography fontWeight={600}>
-                  {membership.status}
-                </Typography>
-              </Grid>
-
-              <Grid item xs={12} sm={4}>
-                <Typography variant="body2" color="text.secondary">
-                  Expiry Date
-                </Typography>
-                <Typography fontWeight={600}>
-                  {membership.expiry}
-                </Typography>
-              </Grid>
-            </Grid>
-          </Paper>
+        <Grid item xs={12} sm={6} md={3}>
+          <IconCard
+            icon="👤"
+            title="Membership"
+            subtitle="Plan & validity"
+            accent="linear-gradient(135deg,#ff758c,#ff7eb3)"
+            onClick={() => navigate("/member/membership")}
+          />
         </Grid>
       </Grid>
     </Box>

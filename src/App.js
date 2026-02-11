@@ -21,11 +21,11 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
 
-          {/* Protected Routes (with Navbar) */}
+          {/* Protected Routes */}
           <Route
             path="/dashboard"
             element={
-              <RequireRole roles={["admin", "trainer", "user"]}>
+              <RequireRole roles={["Admin", "Trainer", "Member"]}>
                 <Navbar />
                 <Dashboard />
               </RequireRole>
@@ -35,7 +35,7 @@ function App() {
           <Route
             path="/members"
             element={
-              <RequireRole roles={["admin", "trainer"]}>
+              <RequireRole roles={["Admin", "Trainer"]}>
                 <Navbar />
                 <Members />
               </RequireRole>
@@ -45,7 +45,7 @@ function App() {
           <Route
             path="/trainers"
             element={
-              <RequireRole roles={["admin"]}>
+              <RequireRole roles={["Admin"]}>
                 <Navbar />
                 <Trainers />
               </RequireRole>
@@ -55,14 +55,14 @@ function App() {
           <Route
             path="/payments"
             element={
-              <RequireRole roles={["admin", "user"]}>
+              <RequireRole roles={["Admin", "Member"]}>
                 <Navbar />
                 <Payments />
               </RequireRole>
             }
           />
 
-          {/* Catch-all redirect */}
+          {/* Catch-all */}
           <Route path="*" element={<Navigate to="/" />} />
 
         </Routes>
