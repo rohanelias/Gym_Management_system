@@ -1,23 +1,15 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useState } from "react";
 
 export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [role, setRole] = useState(undefined); // 👈 important
-
-  // Load role once on app start
-  useEffect(() => {
-    const storedRole = localStorage.getItem("role");
-    setRole(storedRole);
-  }, []);
+  const [role, setRole] = useState(null);
 
   const login = (userRole) => {
-    localStorage.setItem("role", userRole);
     setRole(userRole);
   };
 
   const logout = () => {
-    localStorage.removeItem("role");
     setRole(null);
   };
 

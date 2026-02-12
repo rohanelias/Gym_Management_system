@@ -30,96 +30,57 @@ function Login() {
 
       const data = await res.json();
 
-      if (!res.ok || !data.role) {
-        alert(data.message || "Invalid credentials");
+      if (data.message !== "Login successful") {
+        alert(data.message);
         return;
       }
 
       login(data.role);
-      navigate("/dashboard", { replace: true });
+      navigate("/dashboard");
 
     } catch (err) {
-      alert("Server error. Please try again.");
+      alert("Server error");
     }
   };
 
   return (
     <div className="login-container">
-      <Paper elevation={12} className="login-card">
+      <Paper elevation={10} className="login-card">
         <Stack spacing={2}>
           <Typography className="login-title">
             Welcome Back
           </Typography>
 
-          <Typography className="login-subtitle">
+          <Typography variant="body2" sx={{ opacity: 0.7 }}>
             Login to continue your fitness journey
           </Typography>
 
-          <Divider sx={{ borderColor: "rgba(0,0,0,0.1)" }} />
+          <Divider />
 
-          {/* Email */}
           <TextField
             label="Email"
-            size="small"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            fullWidth
-            InputProps={{
-              sx: {
-                color: "#1f2933",
-                caretColor: "#1f2933",
-                backgroundColor: "#ffffff",
-                borderRadius: "8px"
-              }
-            }}
-            InputLabelProps={{
-              sx: {
-                color: "#6b7280",
-                "&.Mui-focused": {
-                  color: "#2563eb"
-                }
-              }
-            }}
           />
 
-          {/* Password */}
           <TextField
             label="Password"
             type="password"
-            size="small"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            fullWidth
-            InputProps={{
-              sx: {
-                color: "#1f2933",
-                caretColor: "#1f2933",
-                backgroundColor: "#ffffff",
-                borderRadius: "8px"
-              }
-            }}
-            InputLabelProps={{
-              sx: {
-                color: "#6b7280",
-                "&.Mui-focused": {
-                  color: "#2563eb"
-                }
-              }
-            }}
           />
 
           <Button
             variant="contained"
             size="large"
-            className="login-btn"
             onClick={handleLogin}
           >
             LOGIN
           </Button>
 
+          {/* ✅ SIGNUP BUTTON */}
           <Button
             variant="text"
-            className="signup-link"
             onClick={() => navigate("/signup")}
           >
             New user? Sign up

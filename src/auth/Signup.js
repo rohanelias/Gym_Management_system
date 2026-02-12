@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import {
-  Paper,
+  Button,
   Typography,
   Stack,
+  Paper,
   TextField,
-  Button
+  Divider
 } from "@mui/material";
 
 import "./Login.css";
@@ -18,38 +20,44 @@ function Signup() {
   const [password, setPassword] = useState("");
 
   const handleSignup = async () => {
-    const res = await fetch("http://localhost/gym-backend/signup.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password })
-    });
+    try {
+      const res = await fetch("http://localhost/gym-backend/signup.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password })
+      });
 
-    const data = await res.json();
-    alert(data.message);
+      const data = await res.json();
 
-    if (data.message === "Signup successful") {
-      navigate("/");
+      alert(data.message);
+
+      if (data.message === "Signup successful") {
+        navigate("/");
+      }
+
+    } catch (err) {
+      alert("Server error");
     }
   };
 
   return (
     <div className="login-container">
       <Paper elevation={10} className="login-card">
-        <Typography variant="h6" sx={{ color: "white", mb: 2 }}>
-          Member Signup
-        </Typography>
-
         <Stack spacing={2}>
+          <Typography className="login-title">
+            Create Account
+          </Typography>
+
+          <Divider />
+
           <TextField
             label="Name"
-            size="small"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
 
           <TextField
             label="Email"
-            size="small"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -57,13 +65,16 @@ function Signup() {
           <TextField
             label="Password"
             type="password"
-            size="small"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
 
           <Button variant="contained" onClick={handleSignup}>
-            Sign Up
+            SIGN UP
+          </Button>
+
+          <Button variant="text" onClick={() => navigate("/")}>
+            Back to Login
           </Button>
         </Stack>
       </Paper>
