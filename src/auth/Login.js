@@ -35,7 +35,8 @@ function Login() {
         return;
       }
 
-      login(data.role);
+      login(data.role.toLowerCase());
+
       navigate("/dashboard");
 
     } catch (err) {

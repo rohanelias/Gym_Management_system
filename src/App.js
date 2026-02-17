@@ -10,6 +10,7 @@ import Dashboard from "./pages/Dashboard";
 import Members from "./pages/Members";
 import Trainers from "./pages/Trainers";
 import Payments from "./pages/Payments";
+import Attendance from "./pages/Attendance"; // New Import
 
 function App() {
   return (
@@ -20,50 +21,64 @@ function App() {
           {/* Public Routes */}
           <Route path="/" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+            <Route
+  path="/dashboard"
+  element={
+    <RequireRole roles={["admin", "trainer", "member"]}>
+      <Navbar />
+      <Dashboard />
+    </RequireRole>
+  }
+/>
 
-          {/* Protected Routes */}
-          <Route
-            path="/dashboard"
-            element={
-              <RequireRole roles={["Admin", "Trainer", "Member"]}>
-                <Navbar />
-                <Dashboard />
-              </RequireRole>
-            }
-          />
+<Route
+  path="/members"
+  element={
+    <RequireRole roles={["admin"]}>
+      <Navbar />
+      <Members />
+    </RequireRole>
+  }
+/>
 
-          <Route
-            path="/members"
-            element={
-              <RequireRole roles={["Admin", "Trainer"]}>
-                <Navbar />
-                <Members />
-              </RequireRole>
-            }
-          />
+<Route
+  path="/trainers"
+  element={
+    <RequireRole roles={["admin"]}>
+      <Navbar />
+      <Trainers />
+    </RequireRole>
+  }
+/>
 
-          <Route
-            path="/trainers"
-            element={
-              <RequireRole roles={["Admin"]}>
-                <Navbar />
-                <Trainers />
-              </RequireRole>
-            }
-          />
+<Route
+  path="/attendance"
+  element={
+    <RequireRole roles={["admin", "trainer"]}>
+      <Navbar />
+      <Attendance />
+    </RequireRole>
+  }
+/>
 
-          <Route
-            path="/payments"
-            element={
-              <RequireRole roles={["Admin", "Member"]}>
-                <Navbar />
-                <Payments />
-              </RequireRole>
-            }
-          />
+<Route
+  path="/payments"
+  element={
+    <RequireRole roles={["admin", "member"]}>
+      <Navbar />
+      <Payments />
+    </RequireRole>
+  }
+/>
 
-          {/* Catch-all */}
-          <Route path="*" element={<Navigate to="/" />} />
+{/* Catch-all MUST be last */}
+<Route path="*" element={<Navigate to="/" />} />
+
+
+
+          
+
+
 
         </Routes>
       </BrowserRouter>

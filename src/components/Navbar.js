@@ -49,11 +49,16 @@ function Navbar() {
         <Stack direction="row" spacing={1}>
           <NavButton to="/dashboard">Dashboard</NavButton>
 
+          {/* Trainer and Admin can see Attendance */}
+          {(role === "admin" || role === "trainer") && (
+            <NavButton to="/attendance">Attendance</NavButton>
+          )}
+
           {role === "admin" && (
             <>
               <NavButton to="/members">Members</NavButton>
               <NavButton to="/trainers">Trainers</NavButton>
-              <NavButton to="/payments">Payments</NavButton>
+               <NavButton to="/payments">Payments</NavButton>
             </>
           )}
 
@@ -100,6 +105,8 @@ function NavButton({ to, children }) {
       {children}
     </Button>
   );
+  
+
 }
 
 export default Navbar;
