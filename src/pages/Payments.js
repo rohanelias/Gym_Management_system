@@ -31,6 +31,7 @@ function Payments() {
       setPayments(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Error fetching payments:", err);
+      setPayments([]);
     }
   };
 
@@ -79,14 +80,36 @@ function Payments() {
   };
 
   return (
-    <Box sx={{ p: 4 }}>
-      <Typography variant="h4" sx={{ fontWeight: 700, mb: 3 }}>
+    <Box
+      sx={{
+        minHeight: "calc(100vh - 72px)",
+        background: "linear-gradient(180deg, #020617, #0f172a)",
+        p: 4
+      }}
+    >
+      {/* PAGE TITLE */}
+      <Typography
+        variant="h4"
+        fontWeight={700}
+        sx={{ color: "#f8fafc", mb: 3 }}
+      >
         Payments
       </Typography>
 
       {/* ================= ADD PAYMENT FORM ================= */}
-      <Paper sx={{ p: 3, mb: 4 }}>
-        <Typography variant="h6" sx={{ mb: 2 }}>
+      <Paper
+        elevation={6}
+        sx={{
+          p: 3,
+          mb: 4,
+          borderRadius: 3,
+          backgroundColor: "#020617"
+        }}
+      >
+        <Typography
+          variant="h6"
+          sx={{ color: "#e5e7eb", mb: 2 }}
+        >
           Add Payment
         </Typography>
 
@@ -97,6 +120,8 @@ function Payments() {
               value={uid}
               onChange={(e) => setUid(e.target.value)}
               required
+              InputLabelProps={{ style: { color: "#94a3b8" } }}
+              InputProps={{ style: { color: "#e5e7eb" } }}
             />
 
             <TextField
@@ -104,10 +129,12 @@ function Payments() {
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               required
+              InputLabelProps={{ style: { color: "#94a3b8" } }}
+              InputProps={{ style: { color: "#e5e7eb" } }}
             />
 
-            <Button type="submit" variant="contained">
-              ADD PAYMENT
+            <Button variant="contained" type="submit">
+              Add Payment
             </Button>
 
             {statusMsg && <Alert severity="info">{statusMsg}</Alert>}
@@ -116,32 +143,61 @@ function Payments() {
       </Paper>
 
       {/* ================= PAYMENTS TABLE ================= */}
-      <TableContainer component={Paper}>
+      <TableContainer
+        component={Paper}
+        elevation={6}
+        sx={{
+          backgroundColor: "#020617",
+          borderRadius: 3
+        }}
+      >
         <Table>
-          <TableHead sx={{ backgroundColor: "#f3f4f6" }}>
+          <TableHead>
             <TableRow>
-              <TableCell><b>Receipt</b></TableCell>
-              <TableCell><b>Member</b></TableCell>
-              <TableCell><b>Amount</b></TableCell>
-              <TableCell><b>Status</b></TableCell>
-              <TableCell><b>Date</b></TableCell>
+              <TableCell sx={{ color: "#94a3b8" }}><b>Receipt</b></TableCell>
+              <TableCell sx={{ color: "#94a3b8" }}><b>Member</b></TableCell>
+              <TableCell sx={{ color: "#94a3b8" }}><b>Amount</b></TableCell>
+              <TableCell sx={{ color: "#94a3b8" }}><b>Status</b></TableCell>
+              <TableCell sx={{ color: "#94a3b8" }}><b>Date</b></TableCell>
             </TableRow>
           </TableHead>
 
           <TableBody>
             {payments.length > 0 ? (
               payments.map((p) => (
-                <TableRow key={p.PID}>
-                  <TableCell>#PAY-{p.PID}</TableCell>
-                  <TableCell>{p.user_name}</TableCell>
-                  <TableCell>₹{Number(p.Amount).toFixed(2)}</TableCell>
-                  <TableCell>{p.Status}</TableCell>
-                  <TableCell>{p.PaymentDate}</TableCell>
+                <TableRow
+                  key={p.PID}
+                  hover
+                  sx={{
+                    "&:hover": {
+                      backgroundColor: "rgba(255,255,255,0.04)"
+                    }
+                  }}
+                >
+                  <TableCell sx={{ color: "#e5e7eb" }}>
+                    #PAY-{p.PID}
+                  </TableCell>
+                  <TableCell sx={{ color: "#e5e7eb" }}>
+                    {p.user_name}
+                  </TableCell>
+                  <TableCell sx={{ color: "#e5e7eb" }}>
+                    ₹{Number(p.Amount).toFixed(2)}
+                  </TableCell>
+                  <TableCell sx={{ color: "#e5e7eb" }}>
+                    {p.Status}
+                  </TableCell>
+                  <TableCell sx={{ color: "#e5e7eb" }}>
+                    {p.PaymentDate}
+                  </TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={5} align="center" sx={{ py: 3 }}>
+                <TableCell
+                  colSpan={5}
+                  align="center"
+                  sx={{ py: 4, color: "#94a3b8" }}
+                >
                   No payments found
                 </TableCell>
               </TableRow>

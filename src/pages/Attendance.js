@@ -23,14 +23,14 @@ function Attendance() {
   const [attendanceList, setAttendanceList] = useState([]);
   const [status, setStatus] = useState({ message: "", type: "" });
 
-  // Fetch today's attendance
+  /* ================= FETCH ATTENDANCE ================= */
   const fetchAttendance = async () => {
     try {
       const res = await fetch(`${API_BASE}/get_attendance.php`);
       const data = await res.json();
       setAttendanceList(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.error("Fetch attendance failed:", err);
+    } catch {
+      setAttendanceList([]);
     }
   };
 
@@ -38,7 +38,7 @@ function Attendance() {
     fetchAttendance();
   }, []);
 
-  // Mark attendance
+  /* ================= MARK ATTENDANCE ================= */
   const handleCheckIn = async (e) => {
     e.preventDefault();
 
@@ -56,7 +56,7 @@ function Attendance() {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          member_id: Number(memberId)   // ✅ THIS WAS THE ISSUE
+          member_id: Number(memberId)
         })
       });
 
@@ -69,21 +69,42 @@ function Attendance() {
       } else {
         setStatus({ message: data.message, type: "error" });
       }
-    } catch (err) {
+    } catch {
       setStatus({ message: "Server error", type: "error" });
     }
   };
 
   return (
-    <Box sx={{ p: 4, backgroundColor: "#f9fafb", minHeight: "100vh" }}>
-      <Typography variant="h4" sx={{ fontWeight: 700, mb: 4 }}>
+    <Box
+      sx={{
+        minHeight: "calc(100vh - 72px)",
+        background: "linear-gradient(180deg, #020617, #0f172a)",
+        p: 4
+      }}
+    >
+      {/* PAGE TITLE */}
+      <Typography
+        variant="h4"
+        fontWeight={700}
+        sx={{ color: "#f8fafc", mb: 4 }}
+      >
         Daily Attendance
       </Typography>
 
       <Stack spacing={4}>
-        {/* CHECK-IN FORM */}
-        <Paper sx={{ p: 3, borderRadius: 2 }}>
-          <Typography variant="h6" sx={{ mb: 2 }}>
+        {/* ================= CHECK-IN FORM ================= */}
+        <Paper
+          elevation={6}
+          sx={{
+            p: 3,
+            borderRadius: 3,
+            backgroundColor: "#020617"
+          }}
+        >
+          <Typography
+            variant="h6"
+            sx={{ color: "#e5e7eb", mb: 2 }}
+          >
             Mark Member Present
           </Typography>
 
@@ -98,6 +119,8 @@ function Attendance() {
               value={memberId}
               onChange={(e) => setMemberId(e.target.value)}
               required
+              InputLabelProps={{ style: { color: "#94a3b8" } }}
+              InputProps={{ style: { color: "#e5e7eb" } }}
             />
 
             <Button
@@ -116,29 +139,54 @@ function Attendance() {
           )}
         </Paper>
 
-        {/* ATTENDANCE TABLE */}
-        <TableContainer component={Paper}>
+        {/* ================= ATTENDANCE TABLE ================= */}
+        <TableContainer
+          component={Paper}
+          elevation={6}
+          sx={{
+            backgroundColor: "#020617",
+            borderRadius: 3
+          }}
+        >
           <Table>
-            <TableHead sx={{ backgroundColor: "#f3f4f6" }}>
+            <TableHead>
               <TableRow>
-                <TableCell><b>Member ID</b></TableCell>
-                <TableCell><b>Name</b></TableCell>
-                <TableCell><b>Check-In Time</b></TableCell>
+                <TableCell sx={{ color: "#94a3b8" }}><b>Member ID</b></TableCell>
+                <TableCell sx={{ color: "#94a3b8" }}><b>Name</b></TableCell>
+                <TableCell sx={{ color: "#94a3b8" }}><b>Check-In Time</b></TableCell>
               </TableRow>
             </TableHead>
 
             <TableBody>
               {attendanceList.length > 0 ? (
                 attendanceList.map((row, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{row.UID}</TableCell>
-                    <TableCell>{row.Name}</TableCell>
-                    <TableCell>{row.CheckIn}</TableCell>
+                  <TableRow
+                    key={index}
+                    hover
+                    sx={{
+                      "&:hover": {
+                        backgroundColor: "rgba(255,255,255,0.04)"
+                      }
+                    }}
+                  >
+                    <TableCell sx={{ color: "#e5e7eb" }}>
+                      {row.UID}
+                    </TableCell>
+                    <TableCell sx={{ color: "#e5e7eb" }}>
+                      {row.Name}
+                    </TableCell>
+                    <TableCell sx={{ color: "#e5e7eb" }}>
+                      {row.CheckIn}
+                    </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={3} align="center" sx={{ py: 3 }}>
+                  <TableCell
+                    colSpan={3}
+                    align="center"
+                    sx={{ py: 4, color: "#94a3b8" }}
+                  >
                     No attendance marked today
                   </TableCell>
                 </TableRow>

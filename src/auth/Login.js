@@ -35,9 +35,18 @@ function Login() {
         return;
       }
 
-      login(data.role.toLowerCase());
+      // ✅ STORE ROLE IN CONTEXT
+      const role = data.role.toLowerCase();
+      login(role);
 
-      navigate("/dashboard");
+      // ✅ ROLE-BASED REDIRECT
+      if (role === "admin") {
+        navigate("/dashboard", { replace: true });
+      } else if (role === "trainer") {
+        navigate("/trainer-dashboard", { replace: true });
+      } else {
+        alert("Unknown role");
+      }
 
     } catch (err) {
       alert("Server error");
@@ -79,7 +88,6 @@ function Login() {
             LOGIN
           </Button>
 
-          {/* ✅ SIGNUP BUTTON */}
           <Button
             variant="text"
             onClick={() => navigate("/signup")}

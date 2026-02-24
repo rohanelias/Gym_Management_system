@@ -1,11 +1,11 @@
 import {
   Box,
   Typography,
-  Paper,
-  Grid
+  Grid,
+  Paper
 } from "@mui/material";
 
-export default function Dashboard() {
+function TrainerDashboard() {
   return (
     <Box
       sx={{
@@ -14,25 +14,22 @@ export default function Dashboard() {
         p: 4
       }}
     >
-      {/* Page Title */}
+      {/* PAGE TITLE */}
       <Typography
         variant="h4"
         fontWeight={700}
-        sx={{ color: "#f8fafc" }}
-        mb={1}
+        sx={{ color: "#f8fafc", mb: 1 }}
       >
-        Dashboard
+        Trainer Dashboard
       </Typography>
 
       <Typography
-        variant="body1"
-        sx={{ color: "#94a3b8" }}
-        mb={4}
+        sx={{ color: "#94a3b8", mb: 4 }}
       >
-        Logged in as <b>Admin</b>
+        Manage your assigned members, plans and attendance
       </Typography>
 
-      {/* Cards */}
+      {/* DASHBOARD CARDS */}
       <Grid container spacing={3}>
         <Grid item xs={12} md={4}>
           <Paper
@@ -45,10 +42,10 @@ export default function Dashboard() {
             }}
           >
             <Typography variant="subtitle2" sx={{ color: "#94a3b8" }}>
-              Total Members
+              Assigned Members
             </Typography>
             <Typography variant="h3" fontWeight={700}>
-              120
+              12
             </Typography>
           </Paper>
         </Grid>
@@ -64,7 +61,7 @@ export default function Dashboard() {
             }}
           >
             <Typography variant="subtitle2" sx={{ color: "#94a3b8" }}>
-              Active Trainers
+              Workout Plans
             </Typography>
             <Typography variant="h3" fontWeight={700}>
               8
@@ -83,10 +80,10 @@ export default function Dashboard() {
             }}
           >
             <Typography variant="subtitle2" sx={{ color: "#94a3b8" }}>
-              Monthly Revenue
+              Diet Plans
             </Typography>
             <Typography variant="h3" fontWeight={700}>
-              ₹45,000
+              6
             </Typography>
           </Paper>
         </Grid>
@@ -94,3 +91,5 @@ export default function Dashboard() {
     </Box>
   );
 }
+
+export default TrainerDashboard;

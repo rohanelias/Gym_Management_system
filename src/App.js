@@ -10,7 +10,12 @@ import Dashboard from "./pages/Dashboard";
 import Members from "./pages/Members";
 import Trainers from "./pages/Trainers";
 import Payments from "./pages/Payments";
-import Attendance from "./pages/Attendance"; // New Import
+import Attendance from "./pages/Attendance";
+
+import TrainerDashboard from "./pages/TrainerDashboard";
+import TrainerMembers from "./pages/TrainerMembers";
+import TrainerWorkoutPlans from "./pages/TrainerWorkoutPlans";
+import TrainerDietPlans from "./pages/TrainerDietPlans";
 
 function App() {
   return (
@@ -18,67 +23,106 @@ function App() {
       <BrowserRouter>
         <Routes>
 
-          {/* Public Routes */}
+          {/* ================= PUBLIC ROUTES ================= */}
           <Route path="/" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-            <Route
-  path="/dashboard"
-  element={
-    <RequireRole roles={["admin", "trainer", "member"]}>
-      <Navbar />
-      <Dashboard />
-    </RequireRole>
-  }
-/>
 
-<Route
-  path="/members"
-  element={
-    <RequireRole roles={["admin"]}>
-      <Navbar />
-      <Members />
-    </RequireRole>
-  }
-/>
+          {/* ================= COMMON DASHBOARD ================= */}
+          <Route
+            path="/dashboard"
+            element={
+              <RequireRole roles={["admin", "trainer", "member"]}>
+                <Navbar />
+                <Dashboard />
+              </RequireRole>
+            }
+          />
 
-<Route
-  path="/trainers"
-  element={
-    <RequireRole roles={["admin"]}>
-      <Navbar />
-      <Trainers />
-    </RequireRole>
-  }
-/>
+          {/* ================= ADMIN ROUTES ================= */}
+          <Route
+            path="/members"
+            element={
+              <RequireRole roles={["admin"]}>
+                <Navbar />
+                <Members />
+              </RequireRole>
+            }
+          />
 
-<Route
-  path="/attendance"
-  element={
-    <RequireRole roles={["admin", "trainer"]}>
-      <Navbar />
-      <Attendance />
-    </RequireRole>
-  }
-/>
+          <Route
+            path="/trainers"
+            element={
+              <RequireRole roles={["admin"]}>
+                <Navbar />
+                <Trainers />
+              </RequireRole>
+            }
+          />
 
-<Route
-  path="/payments"
-  element={
-    <RequireRole roles={["admin", "member"]}>
-      <Navbar />
-      <Payments />
-    </RequireRole>
-  }
-/>
+          <Route
+            path="/payments"
+            element={
+              <RequireRole roles={["admin", "member"]}>
+                <Navbar />
+                <Payments />
+              </RequireRole>
+            }
+          />
 
-{/* Catch-all MUST be last */}
-<Route path="*" element={<Navigate to="/" />} />
+          {/* ================= ADMIN + TRAINER ================= */}
+          <Route
+            path="/attendance"
+            element={
+              <RequireRole roles={["admin", "trainer"]}>
+                <Navbar />
+                <Attendance />
+              </RequireRole>
+            }
+          />
 
+          {/* ================= TRAINER ROUTES ================= */}
+          <Route
+            path="/trainer-dashboard"
+            element={
+              <RequireRole roles={["trainer"]}>
+                <Navbar />
+                <TrainerDashboard />
+              </RequireRole>
+            }
+          />
 
+          <Route
+            path="/trainer-members"
+            element={
+              <RequireRole roles={["trainer"]}>
+                <Navbar />
+                <TrainerMembers />
+              </RequireRole>
+            }
+          />
 
-          
+          <Route
+            path="/trainer-workouts"
+            element={
+              <RequireRole roles={["trainer"]}>
+                <Navbar />
+                <TrainerWorkoutPlans />
+              </RequireRole>
+            }
+          />
 
+          <Route
+            path="/trainer-diets"
+            element={
+              <RequireRole roles={["trainer"]}>
+                <Navbar />
+                <TrainerDietPlans />
+              </RequireRole>
+            }
+          />
 
+          {/* ================= FALLBACK ================= */}
+          <Route path="*" element={<Navigate to="/" />} />
 
         </Routes>
       </BrowserRouter>

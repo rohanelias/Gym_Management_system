@@ -32,7 +32,7 @@ function Navbar() {
       }}
     >
       <Toolbar sx={{ minHeight: 72 }}>
-        {/* Brand */}
+        {/* BRAND */}
         <Typography
           variant="h6"
           sx={{
@@ -45,24 +45,31 @@ function Navbar() {
           GYM<span style={{ color: "#2563eb" }}>PRO</span>
         </Typography>
 
-        {/* Navigation */}
+        {/* NAV LINKS */}
         <Stack direction="row" spacing={1}>
-          <NavButton to="/dashboard">Dashboard</NavButton>
-
-          {/* Trainer and Admin can see Attendance */}
-          {(role === "admin" || role === "trainer") && (
-            <NavButton to="/attendance">Attendance</NavButton>
-          )}
-
+          {/* ================= ADMIN NAV ================= */}
           {role === "admin" && (
             <>
+              <NavButton to="/dashboard">Dashboard</NavButton>
               <NavButton to="/members">Members</NavButton>
               <NavButton to="/trainers">Trainers</NavButton>
-               <NavButton to="/payments">Payments</NavButton>
+              <NavButton to="/payments">Payments</NavButton>
+              <NavButton to="/attendance">Attendance</NavButton>
             </>
           )}
 
-          {/* Logout */}
+          {/* ================= TRAINER NAV ================= */}
+          {role === "trainer" && (
+            <>
+              <NavButton to="/trainer-dashboard">Dashboard</NavButton>
+              <NavButton to="/trainer-members">My Members</NavButton>
+              <NavButton to="/trainer-workouts">Workout Plans</NavButton>
+              <NavButton to="/trainer-diets">Diet Plans</NavButton>
+              <NavButton to="/attendance">Attendance</NavButton>
+            </>
+          )}
+
+          {/* LOGOUT */}
           <Box ml={1}>
             <Button
               variant="outlined"
@@ -85,7 +92,7 @@ function Navbar() {
   );
 }
 
-/* Reusable nav button */
+/* REUSABLE NAV BUTTON */
 function NavButton({ to, children }) {
   return (
     <Button
@@ -105,8 +112,6 @@ function NavButton({ to, children }) {
       {children}
     </Button>
   );
-  
-
 }
 
 export default Navbar;
