@@ -1,28 +1,35 @@
-import { useEffect, useState } from "react";
-import {
-  Box,
-  Typography,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow
-} from "@mui/material";
+import { useEffect, useState, useContext } from "react";
+import { Box, Typography, Alert } from "@mui/material";
+import { getTrainerMembers } from "../api";
+import TrainerMembersTable from "./TrainerMembersTable";
+import { AuthContext } from "../context/AuthContext";
 
-const API_BASE = "http://localhost/gym-backend";
-const TRAINER_ID = 2; // 🔴 TEMP: replace with logged-in trainer id later
+const pageStyles = {
+  container: {
+    minHeight: "calc(100vh - 72px)",
+    p: 4,
+  },
+  title: {
+    fontWeight: 700,
+    color: "#e2e8f0",
+    mb: 3,
+  },
+};
 
 function TrainerMembers() {
   const [members, setMembers] = useState([]);
+  const [status, setStatus] = useState(null);
+  const { user } = useContext(AuthContext);
 
   const fetchMembers = async () => {
-    const res = await fetch(
-      `${API_BASE}/get_trainer_members.php?trainer_id=${TRAINER_ID}`
-    );
-    const data = await res.json();
-    setMembers(Array.isArray(data) ? data : []);
+    try {
+      // TODO: Replace with actual logged-in trainer id
+      const trainerId = user?.id || 2;
+      const data = await getTrainerMembers(trainerId);
+      setMembers(Array.isArray(data) ? data : []);
+    } catch (error) {
+      setStatus({ severity: "error", message: "Failed to fetch members" });
+    }
   };
 
   useEffect(() => {
@@ -30,58 +37,22 @@ function TrainerMembers() {
   }, []);
 
   return (
-    <Box
-      sx={{
-        minHeight: "calc(100vh - 72px)",
-        background: "linear-gradient(180deg, #020617, #0f172a)",
-        p: 4
-      }}
-    >
-      <Typography
-        variant="h4"
-        fontWeight={700}
-        sx={{ color: "#f8fafc", mb: 3 }}
-      >
+    <Box sx={pageStyles.container}>
+      <Typography variant="h4" sx={pageStyles.title}>
         My Members
       </Typography>
 
-      <TableContainer
-        component={Paper}
-        elevation={6}
-        sx={{ backgroundColor: "#020617", borderRadius: 3 }}
-      >
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell sx={{ color: "#94a3b8" }}><b>ID</b></TableCell>
-              <TableCell sx={{ color: "#94a3b8" }}><b>Name</b></TableCell>
-              <TableCell sx={{ color: "#94a3b8" }}><b>Email</b></TableCell>
-            </TableRow>
-          </TableHead>
+      {status && (
+        <Alert
+          severity={status.severity}
+          sx={{ mb: 2 }}
+          onClose={() => setStatus(null)}
+        >
+          {status.message}
+        </Alert>
+      )}
 
-          <TableBody>
-            {members.length > 0 ? (
-              members.map((m) => (
-                <TableRow key={m.id} hover>
-                  <TableCell sx={{ color: "#e5e7eb" }}>{m.id}</TableCell>
-                  <TableCell sx={{ color: "#e5e7eb" }}>{m.name}</TableCell>
-                  <TableCell sx={{ color: "#e5e7eb" }}>{m.email}</TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={3}
-                  align="center"
-                  sx={{ py: 4, color: "#94a3b8" }}
-                >
-                  No members assigned
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <TrainerMembersTable members={members} />
     </Box>
   );
 }

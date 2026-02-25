@@ -9,7 +9,7 @@ function RequireRole({ roles, children }) {
     return <Navigate to="/" replace />;
   }
 
-  if (!roles.includes(role)) {
+  if (roles && !roles.includes(role)) {
     return <Navigate to="/" replace />;
   }
 
