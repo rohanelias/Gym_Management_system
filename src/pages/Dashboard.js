@@ -1,8 +1,12 @@
-import { Box, Typography, Grid, Paper } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Box, Typography, Grid, Paper, CircularProgress } from "@mui/material";
 import PeopleIcon from "@mui/icons-material/People";
-import FitnessCenterIcon from "@mui/icons-material/FitnessCenter";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import StatCard from "../components/StatCard";
+import { getDashboardStats } from "../api";
+import { RevenueChart, MemberDistributionChart, AttendanceChart } from "../components/DashboardCharts";
+import { motion } from "framer-motion";
 
 const dashboardStyles = {
   container: {
@@ -26,56 +30,103 @@ const dashboardStyles = {
     border: "1px solid rgba(255, 255, 255, 0.1)",
     height: "100%",
     display: "flex",
-    alignItems: "center",
+    flexDirection: "column",
     justifyContent: "center",
   },
 };
 
-const stats = [
-  {
-    title: "Total Members",
-    value: "1,200",
-    icon: <PeopleIcon sx={{ fontSize: 40, color: "#2563eb" }} />,
-  },
-  {
-    title: "Active Trainers",
-    value: "15",
-    icon: <FitnessCenterIcon sx={{ fontSize: 40, color: "#f97316" }} />,
-  },
-  {
-    title: "Monthly Revenue",
-    value: "₹8,50,000",
-    icon: <AttachMoneyIcon sx={{ fontSize: 40, color: "#10b981" }} />,
-  },
-];
-
 export default function Dashboard() {
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getDashboardStats();
+        setStats(data);
+      } catch (error) {
+        console.error("Failed to fetch dashboard data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  if (loading || !stats) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  const statCards = [
+    {
+      title: "Active Members",
+      value: stats.members.toLocaleString(),
+      icon: <PeopleIcon sx={{ fontSize: 40, color: "#2563eb" }} />,
+    },
+    {
+      title: "Today's Attendance",
+      value: stats.attendance.toLocaleString(),
+      icon: <EventAvailableIcon sx={{ fontSize: 40, color: "#10b981" }} />,
+    },
+    {
+      title: "Total Revenue",
+      value: `₹${stats.revenue.toLocaleString()}`,
+      icon: <AttachMoneyIcon sx={{ fontSize: 40, color: "#facc15" }} />,
+    },
+  ];
+
   return (
     <Box sx={dashboardStyles.container}>
-      <Typography variant="h4" sx={dashboardStyles.title}>
-        Admin Dashboard
-      </Typography>
-      <Typography variant="body1" sx={dashboardStyles.subtitle}>
-        Welcome back, let's get to work!
-      </Typography>
+      <motion.div initial={{ x: -100 }} animate={{ x: 0 }} transition={{ type: "spring", damping: 12 }}>
+        <Typography variant="h4" sx={dashboardStyles.title}>
+          Admin Dashboard
+        </Typography>
+        <Typography variant="body1" sx={dashboardStyles.subtitle}>
+          Real-time gym performance and trends.
+        </Typography>
+      </motion.div>
 
       <Grid container spacing={4}>
         <Grid item xs={12} md={8}>
-          <Paper sx={dashboardStyles.chartContainer}>
-            <Typography variant="h6" sx={{ color: "#94a3b8" }}>
-              Chart will be displayed here
-            </Typography>
-          </Paper>
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.1 }}>
+                <Paper sx={dashboardStyles.chartContainer}>
+                  <RevenueChart data={stats.revenueTrend} /> 
+                </Paper>
+              </motion.div>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.2 }}>
+                <Paper sx={dashboardStyles.chartContainer}>
+                  <AttendanceChart data={stats.attendanceTrend} />
+                </Paper>
+              </motion.div>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.3 }}>
+                <Paper sx={dashboardStyles.chartContainer}>
+                  <MemberDistributionChart members={stats.members} trainers={stats.trainers} />
+                </Paper>
+              </motion.div>
+            </Grid>
+          </Grid>
         </Grid>
         <Grid item xs={12} md={4}>
           <Grid container spacing={3}>
-            {stats.map((stat, index) => (
+            {statCards.map((stat, index) => (
               <Grid item xs={12} key={index}>
-                <StatCard
-                  title={stat.title}
-                  value={stat.value}
-                  icon={stat.icon}
-                />
+                <motion.div initial={{ x: 100, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: 0.4 + (index * 0.1) }}>
+                  <StatCard
+                    title={stat.title}
+                    value={stat.value}
+                    icon={stat.icon}
+                  />
+                </motion.div>
               </Grid>
             ))}
           </Grid>

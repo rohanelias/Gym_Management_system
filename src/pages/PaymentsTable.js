@@ -7,6 +7,7 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
+import { motion } from "framer-motion";
 
 const tableStyles = {
   container: {
@@ -39,10 +40,14 @@ function PaymentsTable({ payments }) {
         </TableHead>
         <TableBody>
           {payments.length > 0 ? (
-            payments.map((p) => (
+            payments.map((p, index) => (
               <TableRow
                 key={p.PID}
                 hover
+                component={motion.tr}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.05 }}
                 sx={{
                   "&:hover": {
                     backgroundColor: "rgba(255, 255, 255, 0.04)",
@@ -50,7 +55,7 @@ function PaymentsTable({ payments }) {
                 }}
               >
                 <TableCell sx={tableStyles.bodyCell}>#PAY-{p.PID}</TableCell>
-                <TableCell sx={tableStyles.bodyCell}>{p.user_name}</TableCell>
+                <TableCell sx={tableStyles.bodyCell}>{p.user_name || p.member_name}</TableCell>
                 <TableCell sx={tableStyles.bodyCell}>
                   ₹{Number(p.Amount).toFixed(2)}
                 </TableCell>

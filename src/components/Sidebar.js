@@ -20,6 +20,7 @@ import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
+import StarsIcon from "@mui/icons-material/Stars";
 
 const drawerWidth = 240;
 
@@ -55,7 +56,7 @@ const sidebarStyles = {
 };
 
 function Sidebar() {
-  const { role, logout } = useContext(AuthContext);
+  const { user, role, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -65,14 +66,15 @@ function Sidebar() {
 
   const getNavLinks = () => {
     const commonLinks = [
-      { text: "Profile", to: "/profile", icon: <AccountCircleIcon /> },
+      { text: "My Profile", to: "/profile", icon: <AccountCircleIcon /> },
     ];
 
     const adminLinks = [
       { text: "Dashboard", to: "/dashboard", icon: <DashboardIcon /> },
       { text: "Members", to: "/members", icon: <PeopleIcon /> },
       { text: "Trainers", to: "/trainers", icon: <FitnessCenterIcon /> },
-      { text: "Payments", to: "/payments", icon: <PaymentIcon /> },
+      { text: "Manage Plans", to: "/manage-plans", icon: <StarsIcon /> },
+      { text: "Payment Records", to: "/payments", icon: <PaymentIcon /> },
       { text: "Attendance", to: "/attendance", icon: <EventAvailableIcon /> },
     ];
 
@@ -89,8 +91,9 @@ function Sidebar() {
     ];
 
     const memberLinks = [
-      { text: "Dashboard", to: "/dashboard", icon: <DashboardIcon /> },
+      { text: "Dashboard", to: "/member-dashboard", icon: <DashboardIcon /> },
       { text: "Payments", to: "/payments", icon: <PaymentIcon /> },
+      { text: "My Profile", to: "/profile", icon: <AccountCircleIcon /> },
     ];
 
     switch (role) {
@@ -99,7 +102,7 @@ function Sidebar() {
       case "trainer":
         return [...trainerLinks, ...commonLinks];
       case "member":
-        return [...memberLinks, ...commonLinks];
+        return [...memberLinks];
       default:
         return [];
     }
@@ -107,37 +110,56 @@ function Sidebar() {
 
   return (
     <Drawer variant="permanent" anchor="left" sx={sidebarStyles.drawer}>
-      <Typography variant="h5" sx={sidebarStyles.brand}>
-        NAMMUDE<span style={sidebarStyles.brandSpan}>GYM</span>
-      </Typography>
-      <Divider sx={{ borderColor: "rgba(255, 255, 255, 0.1)" }} />
-      <List>
-        {getNavLinks().map((item) => (
-          <ListItem key={item.text} disablePadding>
-            <ListItemButton component={NavLink} to={item.to}>
-              <ListItemIcon sx={sidebarStyles.listItemIcon}>
-                {item.icon}
-              </ListItemIcon>
-              <ListItemText
-                primary={item.text}
-                sx={sidebarStyles.listItemText}
-              />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-      <Box sx={sidebarStyles.logoutContainer}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        <Typography variant="h5" sx={sidebarStyles.brand}>
+          NAMMUDE<span style={sidebarStyles.brandSpan}>GYM</span>
+        </Typography>
         <Divider sx={{ borderColor: "rgba(255, 255, 255, 0.1)" }} />
-        <List>
-          <ListItem disablePadding>
-            <ListItemButton onClick={handleLogout}>
-              <ListItemIcon sx={sidebarStyles.listItemIcon}>
-                <LogoutIcon />
-              </ListItemIcon>
-              <ListItemText primary="Logout" sx={sidebarStyles.listItemText} />
-            </ListItemButton>
-          </ListItem>
-        </List>
+        
+        <Box sx={{ flexGrow: 1, overflowY: 'auto' }}>
+          <List>
+            {getNavLinks().map((item) => (
+              <ListItem key={item.text} disablePadding>
+                <ListItemButton component={NavLink} to={item.to}>
+                  <ListItemIcon sx={sidebarStyles.listItemIcon}>
+                    {item.icon}
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={item.text}
+                    sx={sidebarStyles.listItemText}
+                  />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+
+        <Box sx={sidebarStyles.logoutContainer}>
+          <Divider sx={{ borderColor: "rgba(255, 255, 255, 0.1)" }} />
+          {user && (
+            <Box sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
+              <AccountCircleIcon sx={{ color: '#2563eb' }} />
+              <Box sx={{ overflow: 'hidden' }}>
+                <Typography variant="body2" sx={{ color: '#f8fafc', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {user.name}
+                </Typography>
+                <Typography variant="caption" sx={{ color: '#94a3b8', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {user.email}
+                </Typography>
+              </Box>
+            </Box>
+          )}
+          <List>
+            <ListItem disablePadding>
+              <ListItemButton onClick={handleLogout}>
+                <ListItemIcon sx={sidebarStyles.listItemIcon}>
+                  <LogoutIcon />
+                </ListItemIcon>
+                <ListItemText primary="Logout" sx={sidebarStyles.listItemText} />
+              </ListItemButton>
+            </ListItem>
+          </List>
+        </Box>
       </Box>
     </Drawer>
   );

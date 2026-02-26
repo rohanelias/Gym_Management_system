@@ -113,14 +113,14 @@ function Login() {
       }
 
       const role = data.role.toLowerCase();
-      login(role);
+      login({ ...data, role });
 
       if (role === "admin") {
         navigate("/dashboard", { replace: true });
       } else if (role === "trainer") {
         navigate("/trainer-dashboard", { replace: true });
       } else if (role === "member") {
-        navigate("/dashboard", { replace: true });
+        navigate("/member-dashboard", { replace: true });
       } else {
         alert("Unknown role");
       }

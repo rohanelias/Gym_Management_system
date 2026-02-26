@@ -17,6 +17,11 @@ export const getTrainers = async () => {
   return handleResponse(response);
 };
 
+export const getDashboardStats = async () => {
+  const response = await fetch(`${API_BASE}/get_dashboard_stats.php`);
+  return handleResponse(response);
+};
+
 export const addMember = async (memberData) => {
   const response = await fetch(`${API_BASE}/add_member.php`, {
     method: "POST",
@@ -46,6 +51,20 @@ export const assignTrainerToMember = async (memberId, trainerId) => {
 
 export const getPayments = async () => {
   const response = await fetch(`${API_BASE}/get_payments.php`);
+  return handleResponse(response);
+};
+
+export const getPlans = async () => {
+  const response = await fetch(`${API_BASE}/get_plans.php`);
+  return handleResponse(response);
+};
+
+export const updatePlan = async (planData) => {
+  const response = await fetch(`${API_BASE}/update_plan.php`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(planData),
+  });
   return handleResponse(response);
 };
 
@@ -105,7 +124,7 @@ export const addWorkoutPlan = async (planData) => {
 
 export const getDietPlans = async (trainerId) => {
   const response = await fetch(
-    `${API_BASE}/get_diet_plans.php?trainer_id=${trainerId}`
+    `${API_BASE}/get_diet-plans.php?trainer_id=${trainerId}`
   );
   return handleResponse(response);
 };
@@ -126,3 +145,11 @@ export const getUserProfile = async (userId) => {
   return handleResponse(response);
 };
 
+export const updateAvailability = async (userId, days) => {
+  const response = await fetch(`${API_BASE}/update_availability.php`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user_id: userId, available_days: days }),
+  });
+  return handleResponse(response);
+};

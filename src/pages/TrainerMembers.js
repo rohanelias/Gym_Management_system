@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from "react";
-import { Box, Typography, Alert } from "@mui/material";
+import { Box, Typography, Alert, CircularProgress } from "@mui/material";
 import { getTrainerMembers } from "../api";
 import TrainerMembersTable from "./TrainerMembersTable";
 import { AuthContext } from "../context/AuthContext";
@@ -19,22 +19,32 @@ const pageStyles = {
 function TrainerMembers() {
   const [members, setMembers] = useState([]);
   const [status, setStatus] = useState(null);
+  const [loading, setLoading] = useState(true);
   const { user } = useContext(AuthContext);
 
-  const fetchMembers = async () => {
-    try {
-      // TODO: Replace with actual logged-in trainer id
-      const trainerId = user?.id || 2;
-      const data = await getTrainerMembers(trainerId);
-      setMembers(Array.isArray(data) ? data : []);
-    } catch (error) {
-      setStatus({ severity: "error", message: "Failed to fetch members" });
-    }
-  };
-
   useEffect(() => {
+    const fetchMembers = async () => {
+      if (!user?.id) return;
+      
+      try {
+        const data = await getTrainerMembers(user.id);
+        setMembers(Array.isArray(data) ? data : []);
+      } catch (error) {
+        setStatus({ severity: "error", message: "Failed to fetch members" });
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchMembers();
-  }, []);
+  }, [user]);
+
+  if (loading && !status) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Box sx={pageStyles.container}>

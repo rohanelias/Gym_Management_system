@@ -6,6 +6,7 @@ import {
   TextField,
   Button,
   MenuItem,
+  Box,
 } from "@mui/material";
 import { addDietPlan, getTrainerMembers } from "../api";
 
@@ -42,6 +43,31 @@ function AddDietPlanForm({ onDietPlanAdded, trainerId }) {
   const [members, setMembers] = useState([]);
   const [memberId, setMemberId] = useState("");
   const [plan, setPlan] = useState("");
+  const [selectedMember, setSelectedMember] = useState(null);
+
+  const dietTemplates = {
+    1: [
+      { name: "Maintenance Plan", content: "High Protein (2g/kg), Moderate Carbs, Healthy Fats. Focus on whole foods." }
+    ],
+    2: [
+      { name: "Lean Bulk", content: "Surplus of 200-300 kcal. Day 1 (Gym): High Carbs. Day 2-7 (Rest): High Protein, Moderate Fats." }
+    ],
+    3: [
+      { name: "Fat Loss Focus", content: "High volume, low calorie density. Eggs/Oats for breakfast, Chicken/Veg for lunch, Fish/Salad for dinner." }
+    ],
+    4: [
+      { name: "Balanced Athlete", content: "Macro ratio 40/30/30. Pre-workout complex carbs, Post-workout fast protein." }
+    ],
+    5: [
+      { name: "Intense Hypertrophy", content: "High carb intake on training days (5 days). Glutamine and Creatine supplementation recommended." }
+    ],
+    6: [
+      { name: "Advanced Cutting", content: "Intermittent fasting (16:8). Low carbs, high fiber vegetables, lean protein sources." }
+    ],
+    7: [
+      { name: "Extreme Performance", content: "High calorie intake (3500+). 6-7 small meals throughout the day. Hydration: 4L+ water." }
+    ]
+  };
 
   useEffect(() => {
     const fetchMembers = async () => {
@@ -54,6 +80,17 @@ function AddDietPlanForm({ onDietPlanAdded, trainerId }) {
     };
     fetchMembers();
   }, [trainerId]);
+
+  const handleMemberChange = (id) => {
+    setMemberId(id);
+    const member = members.find(m => m.id === id);
+    setSelectedMember(member);
+    setPlan(""); 
+  };
+
+  const applyTemplate = (content) => {
+    setPlan(content);
+  };
 
   const handleSubmit = async () => {
     if (!memberId || !plan) {
@@ -77,6 +114,7 @@ function AddDietPlanForm({ onDietPlanAdded, trainerId }) {
         });
         setMemberId("");
         setPlan("");
+        setSelectedMember(null);
       } else {
         onDietPlanAdded({
           severity: "error",
@@ -99,28 +137,54 @@ function AddDietPlanForm({ onDietPlanAdded, trainerId }) {
           fullWidth
           label="Select Member"
           value={memberId}
-          onChange={(e) => setMemberId(e.target.value)}
+          onChange={(e) => handleMemberChange(e.target.value)}
           sx={formStyles.textField}
         >
           {members.length > 0 ? (
             members.map((m) => (
               <MenuItem key={m.id} value={m.id}>
-                {m.name}
+                {m.name} {m.available_days ? `(${m.available_days} Days)` : ""}
               </MenuItem>
             ))
           ) : (
             <MenuItem disabled>No members assigned</MenuItem>
           )}
         </TextField>
+
+        {selectedMember && (
+          <Box sx={{ p: 2, bgcolor: "rgba(16, 185, 129, 0.1)", borderRadius: 1, border: "1px dashed #10b981" }}>
+            <Typography variant="subtitle2" sx={{ color: "#f8fafc", mb: 1 }}>
+              Member Availability: {selectedMember.available_days || "Not specified"} Days / Week
+            </Typography>
+            {selectedMember.available_days && (
+              <Stack direction="row" spacing={1} flexWrap="wrap" gap={1}>
+                {dietTemplates[selectedMember.available_days]?.map((template, idx) => (
+                  <Button 
+                    key={idx} 
+                    variant="outlined" 
+                    size="small" 
+                    color="success"
+                    onClick={() => applyTemplate(template.content)}
+                    sx={{ textTransform: "none" }}
+                  >
+                    Use "{template.name}"
+                  </Button>
+                ))}
+              </Stack>
+            )}
+          </Box>
+        )}
+
         <TextField
           label="Diet Plan"
           multiline
-          rows={4}
+          rows={6}
           value={plan}
           onChange={(e) => setPlan(e.target.value)}
+          placeholder="Select a template above or type diet details here..."
           sx={formStyles.textField}
         />
-        <Button variant="contained" onClick={handleSubmit}>
+        <Button variant="contained" color="success" onClick={handleSubmit}>
           Save Diet Plan
         </Button>
       </Stack>

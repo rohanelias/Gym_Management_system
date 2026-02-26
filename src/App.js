@@ -11,6 +11,10 @@ import Trainers from "./pages/Trainers";
 import Payments from "./pages/Payments";
 import Attendance from "./pages/Attendance";
 import UserProfile from "./pages/UserProfile";
+import ViewProfile from "./pages/ViewProfile";
+import MemberDashboard from "./pages/MemberDashboard";
+import Plans from "./pages/Plans";
+import ManagePlans from "./pages/ManagePlans";
 
 import TrainerDashboard from "./pages/TrainerDashboard";
 import TrainerMembers from "./pages/TrainerMembers";
@@ -29,8 +33,16 @@ function App() {
             <Route
               path="/dashboard"
               element={
-                <RequireRole roles={["admin", "trainer", "member"]}>
+                <RequireRole roles={["admin", "trainer"]}>
                   <Dashboard />
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/member-dashboard"
+              element={
+                <RequireRole roles={["member"]}>
+                  <MemberDashboard />
                 </RequireRole>
               }
             />
@@ -63,6 +75,14 @@ function App() {
               element={
                 <RequireRole roles={["admin"]}>
                   <Trainers />
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/manage-plans"
+              element={
+                <RequireRole roles={["admin"]}>
+                  <ManagePlans />
                 </RequireRole>
               }
             />

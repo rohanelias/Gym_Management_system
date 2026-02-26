@@ -3,18 +3,23 @@ import { createContext, useState } from "react";
 export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [role, setRole] = useState(null);
+  const [user, setUser] = useState(null);
 
-  const login = (userRole) => {
-    setRole(userRole);
+  const login = (userData) => {
+    // Normalize ID to 'id' property
+    const normalizedUser = {
+      ...userData,
+      id: userData.id || userData.uid || userData.user_id
+    };
+    setUser(normalizedUser);
   };
 
   const logout = () => {
-    setRole(null);
+    setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ role, login, logout }}>
+    <AuthContext.Provider value={{ user, role: user?.role, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

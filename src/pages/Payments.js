@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Box, Typography, Alert } from "@mui/material";
 import { getPayments } from "../api";
 import AddPaymentForm from "./AddPaymentForm";
 import PaymentsTable from "./PaymentsTable";
+import { AuthContext } from "../context/AuthContext";
 
 const pageStyles = {
   container: {
@@ -19,11 +20,24 @@ const pageStyles = {
 function Payments() {
   const [payments, setPayments] = useState([]);
   const [status, setStatus] = useState(null);
+  const { user, role } = useContext(AuthContext);
 
   const fetchPayments = async () => {
     try {
       const paymentsData = await getPayments();
-      setPayments(Array.isArray(paymentsData) ? paymentsData : []);
+      const allPayments = Array.isArray(paymentsData) ? paymentsData : [];
+      
+      // If member, filter to only show their own payments
+      if (role === "member" && user?.id) {
+        const myPayments = allPayments.filter(p => {
+            // Robust check: handle both p.UID and p.uid, and use loose equality
+            const paymentUid = p.UID || p.uid;
+            return String(paymentUid) === String(user.id);
+        });
+        setPayments(myPayments);
+      } else {
+        setPayments(allPayments);
+      }
     } catch (error) {
       setStatus({ severity: "error", message: "Failed to fetch payments" });
     }
@@ -31,19 +45,22 @@ function Payments() {
 
   useEffect(() => {
     fetchPayments();
-  }, []);
+  }, [user, role]);
 
   const handleStatusUpdate = (newStatus) => {
     setStatus(newStatus);
     if (newStatus.severity === "success") {
-      fetchPayments();
+      // Add a tiny delay to ensure DB has committed the record
+      setTimeout(() => {
+        fetchPayments();
+      }, 500);
     }
   };
 
   return (
     <Box sx={pageStyles.container}>
       <Typography variant="h4" sx={pageStyles.title}>
-        Payments Management
+        {role === "member" ? "My Payments" : "Payments Management"}
       </Typography>
 
       {status && (
@@ -56,7 +73,11 @@ function Payments() {
         </Alert>
       )}
 
-      <AddPaymentForm onPaymentAdded={handleStatusUpdate} />
+      {role === "member" && <AddPaymentForm onPaymentAdded={handleStatusUpdate} />}
+      
+      <Typography variant="h5" sx={{ ...pageStyles.title, mt: role === "member" ? 4 : 0, mb: 2 }}>
+        {role === "member" ? "My Payment History" : "Recent System Payments"}
+      </Typography>
       <PaymentsTable payments={payments} />
     </Box>
   );

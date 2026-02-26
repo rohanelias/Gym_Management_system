@@ -7,6 +7,7 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
+import { motion } from "framer-motion";
 
 const tableStyles = {
   container: {
@@ -41,6 +42,10 @@ function AttendanceTable({ attendanceList }) {
               <TableRow
                 key={index}
                 hover
+                component={motion.tr}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.05 }}
                 sx={{
                   "&:hover": {
                     backgroundColor: "rgba(255, 255, 255, 0.04)",

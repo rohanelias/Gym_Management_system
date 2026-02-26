@@ -1,11 +1,24 @@
-import { Box, Typography, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import React, { useEffect, useState, useContext } from "react";
+import { 
+  Box, 
+  Typography, 
+  Grid, 
+  Paper, 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableContainer, 
+  TableHead, 
+  TableRow, 
+  CircularProgress 
+} from "@mui/material";
 import PeopleIcon from "@mui/icons-material/People";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import StatCard from "../components/StatCard";
-import { getTrainerMembers } from "../api";
-import { useEffect, useState, useContext } from "react";
+import { getTrainerMembers, getWorkoutPlans, getDietPlans } from "../api";
 import { AuthContext } from "../context/AuthContext";
+import { AttendanceChart } from "../components/DashboardCharts";
 
 const dashboardStyles = {
   container: {
@@ -27,6 +40,14 @@ const dashboardStyles = {
     background: "rgba(15, 23, 42, 0.8)",
     backdropFilter: "blur(10px)",
     border: "1px solid rgba(255, 255, 255, 0.1)",
+    mb: 4,
+  },
+  chartPaper: {
+    p: 3,
+    borderRadius: 3,
+    background: "rgba(15, 23, 42, 0.8)",
+    backdropFilter: "blur(10px)",
+    border: "1px solid rgba(255, 255, 255, 0.1)",
   },
   headerCell: {
     color: "#94a3b8",
@@ -37,40 +58,60 @@ const dashboardStyles = {
   },
 };
 
-const stats = [
-  {
-    title: "Assigned Members",
-    value: "25",
-    icon: <PeopleIcon sx={{ fontSize: 40, color: "#2563eb" }} />,
-  },
-  {
-    title: "Workout Plans",
-    value: "10",
-    icon: <AssignmentIcon sx={{ fontSize: 40, color: "#f97316" }} />,
-  },
-  {
-    title: "Diet Plans",
-    value: "8",
-    icon: <RestaurantMenuIcon sx={{ fontSize: 40, color: "#10b981" }} />,
-  },
-];
-
 function TrainerDashboard() {
   const [members, setMembers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [counts, setCounts] = useState({ workout: 0, diet: 0 });
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
-    const fetchMembers = async () => {
+    const fetchData = async () => {
       try {
-        const trainerId = user?.id || 2;
-        const data = await getTrainerMembers(trainerId);
-        setMembers(Array.isArray(data) ? data : []);
+        const trainerId = user?.id || 1;
+        const [membersData, workoutData, dietData] = await Promise.all([
+          getTrainerMembers(trainerId),
+          getWorkoutPlans(trainerId),
+          getDietPlans(trainerId),
+        ]);
+        setMembers(Array.isArray(membersData) ? membersData : []);
+        setCounts({
+          workout: Array.isArray(workoutData) ? workoutData.length : 0,
+          diet: Array.isArray(dietData) ? dietData.length : 0,
+        });
       } catch (error) {
-        console.error(error);
+        console.error("Failed to fetch trainer data:", error);
+      } finally {
+        setLoading(false);
       }
     };
-    fetchMembers();
+    fetchData();
   }, [user]);
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  const statCards = [
+    {
+      title: "Assigned Members",
+      value: members.length.toLocaleString(),
+      icon: <PeopleIcon sx={{ fontSize: 40, color: "#2563eb" }} />,
+    },
+    {
+      title: "Workout Plans",
+      value: counts.workout.toLocaleString(),
+      icon: <AssignmentIcon sx={{ fontSize: 40, color: "#f97316" }} />,
+    },
+    {
+      title: "Diet Plans",
+      value: counts.diet.toLocaleString(),
+      icon: <RestaurantMenuIcon sx={{ fontSize: 40, color: "#10b981" }} />,
+    },
+  ];
 
   return (
     <Box sx={dashboardStyles.container}>
@@ -118,10 +159,14 @@ function TrainerDashboard() {
               </TableBody>
             </Table>
           </TableContainer>
+
+          <Paper sx={dashboardStyles.chartPaper}>
+            <AttendanceChart />
+          </Paper>
         </Grid>
         <Grid item xs={12} md={4}>
           <Grid container spacing={3}>
-            {stats.map((stat, index) => (
+            {statCards.map((stat, index) => (
               <Grid item xs={12} key={index}>
                 <StatCard
                   title={stat.title}
