@@ -33,6 +33,8 @@ import EmailIcon from "@mui/icons-material/Email";
 import BadgeIcon from "@mui/icons-material/Badge";
 import HistoryIcon from "@mui/icons-material/History";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
+import { IconButton } from "@mui/material";
 import { motion } from "framer-motion";
 
 const pageStyles = {
@@ -45,8 +47,20 @@ const pageStyles = {
     alignItems: "center", gap: 4,
   },
   avatar: {
-    width: 120, height: 120, fontSize: "3rem", bgcolor: "#2563eb",
+    width: 140, height: 140, fontSize: "3rem", bgcolor: "#2563eb",
     boxShadow: "0 0 20px rgba(37, 99, 235, 0.5)",
+    border: "4px solid rgba(255, 255, 255, 0.1)",
+  },
+  avatarContainer: {
+    position: "relative",
+  },
+  uploadButton: {
+    position: "absolute",
+    bottom: 5,
+    right: 5,
+    bgcolor: "#2563eb",
+    color: "#fff",
+    "&:hover": { bgcolor: "#1d4ed8" },
   },
   sectionTitle: { fontWeight: 700, color: "#f8fafc", mb: 3, display: "flex", alignItems: "center", gap: 1 },
 };
@@ -56,6 +70,7 @@ function UserProfile() {
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState(null);
   const [availableDays, setAvailableDays] = useState("");
+  const [uploading, setUploading] = useState(false);
   
   // Modal states
   const [openModal, setOpenModal] = useState(false);
@@ -78,6 +93,34 @@ function UserProfile() {
       setModalContent(profile.diet_plan || "No diet plan assigned yet.");
     }
     setOpenModal(true);
+  };
+
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("profile_pic", file);
+    formData.append("user_id", user.id);
+
+    setUploading(true);
+    try {
+      const response = await fetch("http://localhost/gym-backend/update_profile_pic.php", {
+        method: "POST",
+        body: formData,
+      });
+      const data = await response.json();
+      if (data.status === "success") {
+        setProfile(prev => ({ ...prev, profile_pic: data.url }));
+        setStatus({ severity: "success", message: "Profile picture updated successfully!" });
+      } else {
+        setStatus({ severity: "error", message: data.message });
+      }
+    } catch (error) {
+      setStatus({ severity: "error", message: "Failed to upload image" });
+    } finally {
+      setUploading(false);
+    }
   };
 
   useEffect(() => {
@@ -149,7 +192,27 @@ function UserProfile() {
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
         <Paper sx={pageStyles.profileHeader}>
-          <Avatar sx={pageStyles.avatar}>{profile.name?.charAt(0)}</Avatar>
+          <Box sx={pageStyles.avatarContainer}>
+            <Avatar 
+              src={profile.profile_pic} 
+              sx={pageStyles.avatar}
+            >
+              {!profile.profile_pic && profile.name?.charAt(0)}
+            </Avatar>
+            <IconButton 
+              sx={pageStyles.uploadButton} 
+              component="label" 
+              disabled={uploading}
+            >
+              <input 
+                hidden 
+                accept="image/*" 
+                type="file" 
+                onChange={handleFileChange} 
+              />
+              {uploading ? <CircularProgress size={24} color="inherit" /> : <PhotoCameraIcon />}
+            </IconButton>
+          </Box>
           <Box sx={{ flexGrow: 1 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
               <Typography variant="h3" sx={{ fontWeight: 800, color: "#f8fafc" }}>{profile.name}</Typography>

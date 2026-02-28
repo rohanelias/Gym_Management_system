@@ -67,7 +67,7 @@ const theme = createTheme({
     MuiCssBaseline: {
       styleOverrides: {
         body: {
-          backgroundImage: `url(${process.env.PUBLIC_URL}/1.jpeg)`,
+          backgroundImage: `url(${process.env.PUBLIC_URL}/2.jpeg)`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundAttachment: "fixed",

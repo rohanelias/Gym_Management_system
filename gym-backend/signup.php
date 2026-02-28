@@ -21,13 +21,14 @@ if (!$data) {
 $name = $data["name"];
 $email = $data["email"];
 $password = $data["password"];
+$role = isset($data["role"]) ? $data["role"] : "Member"; // Allow role choice, default to Member
 
-$sql = "INSERT INTO users (Name, Email, Password, Role, Status, JoinDate) VALUES (?, ?, ?, 'Member', 'Active', CURDATE())";
+$sql = "INSERT INTO users (Name, Email, Password, Role, Status, JoinDate) VALUES (?, ?, ?, ?, 'Pending', CURDATE())";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("sss", $name, $email, $password);
+$stmt->bind_param("ssss", $name, $email, $password, $role);
 
 if ($stmt->execute()) {
-    echo json_encode(["message" => "Signup successful"]);
+    echo json_encode(["message" => "Signup successful. Your account is pending admin approval."]);
 } else {
     echo json_encode(["message" => "Signup failed"]);
 }

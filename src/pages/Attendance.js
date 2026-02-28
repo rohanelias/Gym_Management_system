@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography, Alert, Stack } from "@mui/material";
-import { getAttendance } from "../api";
+import { getAttendance, getMembers } from "../api";
 import MarkAttendanceForm from "./MarkAttendanceForm";
 import AttendanceTable from "./AttendanceTable";
 
@@ -18,25 +18,31 @@ const pageStyles = {
 
 function Attendance() {
   const [attendanceList, setAttendanceList] = useState([]);
+  const [members, setMembers] = useState([]);
   const [status, setStatus] = useState(null);
 
-  const fetchAttendance = async () => {
+  const fetchData = async () => {
     try {
-      const data = await getAttendance();
-      setAttendanceList(Array.isArray(data) ? data : []);
+      const [attendanceData, membersData] = await Promise.all([
+        getAttendance(),
+        getMembers()
+      ]);
+      setAttendanceList(Array.isArray(attendanceData) ? attendanceData : []);
+      setMembers(Array.isArray(membersData) ? membersData : []);
     } catch {
       setAttendanceList([]);
+      setMembers([]);
     }
   };
 
   useEffect(() => {
-    fetchAttendance();
+    fetchData();
   }, []);
 
   const handleStatusUpdate = (newStatus) => {
     setStatus(newStatus);
     if (newStatus.severity === "success") {
-      fetchAttendance();
+      fetchData();
     }
   };
 
@@ -56,7 +62,10 @@ function Attendance() {
           </Alert>
         )}
 
-        <MarkAttendanceForm onAttendanceMarked={handleStatusUpdate} />
+        <MarkAttendanceForm 
+          onAttendanceMarked={handleStatusUpdate} 
+          members={members}
+        />
         <AttendanceTable attendanceList={attendanceList} />
       </Stack>
     </Box>

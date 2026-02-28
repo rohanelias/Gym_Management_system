@@ -13,6 +13,7 @@ import Attendance from "./pages/Attendance";
 import UserProfile from "./pages/UserProfile";
 import ViewProfile from "./pages/ViewProfile";
 import MemberDashboard from "./pages/MemberDashboard";
+import MyPlans from "./pages/MyPlans";
 import Plans from "./pages/Plans";
 import ManagePlans from "./pages/ManagePlans";
 
@@ -43,6 +44,14 @@ function App() {
               element={
                 <RequireRole roles={["member"]}>
                   <MemberDashboard />
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/my-plans"
+              element={
+                <RequireRole roles={["member"]}>
+                  <MyPlans />
                 </RequireRole>
               }
             />

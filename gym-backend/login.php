@@ -16,7 +16,7 @@ $data = json_decode(file_get_contents("php://input"), true);
 $email = isset($data['email']) ? $data['email'] : "";
 $password = isset($data['password']) ? $data['password'] : "";
 
-$sql = "SELECT UID, Name, Email, Role FROM users WHERE Email = ? AND Password = ?";
+$sql = "SELECT UID, Name, Email, Role, Status FROM users WHERE Email = ? AND Password = ?";
 $stmt = $conn->prepare($sql);
 if (!$stmt) {
     echo json_encode(["message" => "Prepare failed", "error" => $conn->error]);
@@ -28,6 +28,11 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 if ($row = $result->fetch_assoc()) {
+    if ($row["Status"] === "Pending") {
+        echo json_encode(["message" => "Your account is still pending admin approval."]);
+        exit();
+    }
+
     echo json_encode([
         "message" => "Login successful",
         "role"    => strtolower($row["Role"]),

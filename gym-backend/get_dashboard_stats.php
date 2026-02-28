@@ -47,6 +47,16 @@ for ($i = 6; $i >= 0; $i--) {
 }
 $data['attendanceTrend'] = $attendanceTrend;
 
+/* 4. RECENT PAYMENTS */
+$recentPayments = [];
+$pRes = $conn->query("SELECT p.PID, p.Amount, p.PaymentDate, u.Name as member_name FROM payment p JOIN users u ON p.UID = u.UID ORDER BY p.PaymentDate DESC, p.PID DESC LIMIT 5");
+if ($pRes) {
+    while($row = $pRes->fetch_assoc()) {
+        $recentPayments[] = $row;
+    }
+}
+$data['recentPayments'] = $recentPayments;
+
 echo json_encode($data);
 $conn->close();
 ?>

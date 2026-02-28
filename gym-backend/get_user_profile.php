@@ -17,7 +17,7 @@ try {
     }
 
     /* 1. GET USER INFO */
-    $sql = "SELECT UID AS id, Name AS name, Email AS email, Role AS role, JoinDate, AvailableDays AS available_days FROM users WHERE UID = ?";
+    $sql = "SELECT UID AS id, Name AS name, Email AS email, Role AS role, JoinDate, AvailableDays AS available_days, ProfilePic AS profile_pic FROM users WHERE UID = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $user_id);
     $stmt->execute();

@@ -5,6 +5,7 @@ import {
   Box,
   TextField,
   Button,
+  MenuItem,
 } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { markAttendance } from "../api";
@@ -37,7 +38,7 @@ const formStyles = {
   },
 };
 
-function MarkAttendanceForm({ onAttendanceMarked }) {
+function MarkAttendanceForm({ onAttendanceMarked, members = [] }) {
   const [memberId, setMemberId] = useState("");
 
   const handleCheckIn = async (e) => {
@@ -46,7 +47,7 @@ function MarkAttendanceForm({ onAttendanceMarked }) {
     if (!memberId) {
       onAttendanceMarked({
         severity: "warning",
-        message: "Please enter Member ID",
+        message: "Please select a member",
       });
       return;
     }
@@ -77,17 +78,31 @@ function MarkAttendanceForm({ onAttendanceMarked }) {
       </Typography>
       <Box component="form" onSubmit={handleCheckIn} sx={{ display: "flex", gap: 2 }}>
         <TextField
+          select
           fullWidth
-          label="Member ID"
+          label="Select Member"
           value={memberId}
           onChange={(e) => setMemberId(e.target.value)}
           required
           sx={formStyles.textField}
-        />
+        >
+          {members.length > 0 ? (
+            members.map((m) => (
+              <MenuItem key={m.id} value={m.id}>
+                {m.name} (ID: {m.id})
+              </MenuItem>
+            ))
+          ) : (
+            <MenuItem disabled value="">
+              No members found
+            </MenuItem>
+          )}
+        </TextField>
         <Button
           type="submit"
           variant="contained"
           startIcon={<CheckCircleIcon />}
+          sx={{ minWidth: "120px" }}
         >
           Check In
         </Button>

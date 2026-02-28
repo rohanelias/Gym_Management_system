@@ -3,6 +3,7 @@ import { Box, Typography, Alert } from "@mui/material";
 import { getMembers, getTrainers } from "../api";
 import AddMemberForm from "./AddMemberForm";
 import MembersTable from "./MembersTable";
+import PendingApprovals from "./PendingApprovals";
 import { motion } from "framer-motion";
 
 const pageStyles = {
@@ -82,6 +83,10 @@ function Members() {
           </Alert>
         </motion.div>
       )}
+
+      <motion.div variants={itemVariants}>
+        <PendingApprovals onUpdate={handleStatusUpdate} />
+      </motion.div>
 
       <motion.div variants={itemVariants}>
         <AddMemberForm onMemberAdded={handleStatusUpdate} />

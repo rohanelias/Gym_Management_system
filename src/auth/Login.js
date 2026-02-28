@@ -10,10 +10,14 @@ import {
   Grid,
 } from "@mui/material";
 import { motion } from "framer-motion";
+import BackgroundConstellations from "../components/BackgroundConstellations";
 
 const loginStyles = {
   container: {
     minHeight: "100vh",
+    backgroundColor: "#020617",
+    position: "relative",
+    overflow: "hidden",
   },
   leftPanel: {
     position: "relative",
@@ -131,6 +135,7 @@ function Login() {
 
   return (
     <Grid container sx={loginStyles.container}>
+      <BackgroundConstellations />
       <Grid item xs={12} md={6} sx={loginStyles.leftPanel}>
         <video autoPlay muted loop style={loginStyles.video}>
           <source
